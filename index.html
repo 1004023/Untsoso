@@ -279,14 +279,16 @@
     let musicStarted = false;
     function startMusic(){
         if (musicStarted) return;
-        musicStarted = true;
-        bgMusic.play().catch(()=>{ musicStarted = false; });
+        bgMusic.play().then(()=>{ musicStarted = true; }).catch(()=>{ musicStarted = false; });
     }
     function toggleMute(){
         bgMusic.muted = !bgMusic.muted;
         document.getElementById('muteBtn').textContent = bgMusic.muted ? '🔇' : '🔊';
         if (!musicStarted) startMusic();
     }
+    // Try to play immediately on load (works on many desktop browsers / repeat visitors)
+    startMusic();
+    // Fallback: if the browser blocked it, start on the first touch/click/key anywhere
     window.addEventListener('pointerdown', startMusic, { once:true });
     window.addEventListener('touchstart', startMusic, { once:true });
     window.addEventListener('keydown', startMusic, { once:true });
