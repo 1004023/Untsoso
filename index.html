@@ -176,6 +176,12 @@
         color:#fff; font-size:20px; width:42px; height:42px; border-radius:50%;
         cursor:pointer;
     }
+    #muteBtn {
+        position:fixed; bottom:18px; left:18px; z-index:9997;
+        background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25);
+        color:#fff; font-size:18px; width:44px; height:44px; border-radius:50%;
+        cursor:pointer;
+    }
     #heartPhotoReveal {
         position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.85);
         z-index:10002; opacity:0; pointer-events:none; transition:opacity 0.4s ease, transform 0.4s ease;
@@ -196,6 +202,9 @@
     <div class="splash-count" id="countdownDisplay">3</div>
     <div class="splash-sub">happy birthday 🦋</div>
 </div>
+
+<audio id="bgMusic" src="song.mp3" loop preload="auto"></audio>
+<button id="muteBtn" onclick="toggleMute()">🔊</button>
 
 <div id="main">
 
@@ -265,6 +274,23 @@
 </div>
 
 <script>
+    /* ================= Background music ================= */
+    const bgMusic = document.getElementById('bgMusic');
+    let musicStarted = false;
+    function startMusic(){
+        if (musicStarted) return;
+        musicStarted = true;
+        bgMusic.play().catch(()=>{ musicStarted = false; });
+    }
+    function toggleMute(){
+        bgMusic.muted = !bgMusic.muted;
+        document.getElementById('muteBtn').textContent = bgMusic.muted ? '🔇' : '🔊';
+        if (!musicStarted) startMusic();
+    }
+    window.addEventListener('pointerdown', startMusic, { once:true });
+    window.addEventListener('touchstart', startMusic, { once:true });
+    window.addEventListener('keydown', startMusic, { once:true });
+
     /* ================= Lightning heart (splash background) ================= */
     (function(){
         const c = document.getElementById('lightningCanvas'), ctx = c.getContext('2d');
@@ -754,7 +780,7 @@
             ctx.fillText(CONFIG.subtitle, cx, cy + Math.min(canvas.width, canvas.height) * 0.035);
             ctx.restore();
         }
-       function render(ts) {
+        function render(ts) {
             if (document.getElementById('heartOverlay').style.display === 'none') {
                 requestAnimationFrame(render);
                 return;
@@ -780,4 +806,4 @@
 </script>
 
 </body>
-                       </html>
+</html>
